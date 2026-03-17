@@ -39,8 +39,19 @@ python manage.py populate_db
 python manage.py runserver
 ```
 
+## Local Admin Access
+To view the Django Administration Panel locally, type the following command
+```bash
+python manage.py createsuperuser
+```
+By following the prompts, you will be able to create your local administrator account.
+You can view the local Django Administration Panel at http://127.0.0.1:8000/admin once your local server is running.
+
+
 ## Demo Site
-The demo site with pre-populated data can be viewed at [placeholder]
+The demo site with pre-populated data can be viewed at https://dilnahal.pythonanywhere.com/.
+
+The Django Administration Panel is available at https://dilnahal.pythonanywhere.com/admin and can be accessed using the provided administrator username and password (see text document attached to submission).
 
 ## AI Attribution
 Claude Opus 4.6 was used to generate sample data to populate the db and quickly reference Django & Bootstrap documentation.
