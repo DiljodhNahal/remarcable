@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Filters</h5>
+                <form method="get" action="{% url 'products:product_list' %}">
+                    <div class="mb-3">
+                        <label for="{{ form.search.id_for_label }}" class="form-label">Search</label>
+                        {{ form.search }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                        {{ form.category }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tags</label>
+                        {{ form.tags }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Apply</button>
+                    <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary w-100 mt-2">Clear</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+
+        <h2>Products <span class="badge bg-secondary">{{ result_count }}</span></h2>
+
+        {% if products %}
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Tags</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for product in products %}
+
+                            <tr>
+                                <td>
+                                    <strong>{{ product.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ product.description|truncatechars:35 }}</small>
+                                </td>
+                                <td>{{ product.category.name }}</td>
+                                <td>
+                                    {% for tag in product.tags.all %}
+                                        <span class="badge bg-info text-dark">{{ tag.name }}</span>
+                                    {% empty %}
+                                        <span class="text-muted">—</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% if product.discount_percentage %}
+                                        <del class="text-muted">${{ product.base_price }}</del>
+                                        <span class="badge bg-danger">{{ product.discount_percentage }}% off</span>
+                                        <br>
+                                        <strong class="text-success">${{ product.price }}</strong>
+                                    {% else %}
+                                        ${{ product.base_price }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            {% if products.has_other_pages %}
+
+                <nav aria-label="Product pagination">
+
+                    <ul class="pagination justify-content-center mt-4">
+
+                        {% if products.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ query_string }}&page={{ products.previous_page_number }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                        {% endif %}
+
+                        {% for num in products.paginator.page_range %}
+
+                            {% if products.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ query_string }}&page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ query_string }}&page={{ products.next_page_number }}">Next</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="alert alert-info">No products found.</div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
